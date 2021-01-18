@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceWarningDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceWarning" id="deviceWarningMap">
+        <result property="id" column="id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="warningType" column="warning_type"/>
+        <result property="content" column="content"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into device_warning(
+                                                                            device_id,
+                                                                            warning_type,
+                                                                            content,
+                                      ) values (
+                                                #{ deviceId},
+                                                #{ warningType},
+                                                #{ content},
+                              )
+    </insert>
+
+    <update id="update">
+        update device_warning
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="deviceId != null">
+                    device_id = #{deviceId},
+                </if>
+                            <if test="warningType != null">
+                    warning_type = #{warningType},
+                </if>
+                            <if test="content != null">
+                    content = #{content},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_warning where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceWarning">
+        select * from device_warning t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='device_id'">
+                    and t.device_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='warning_type'">
+                    and t.warning_type like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='content'">
+                    and t.content like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

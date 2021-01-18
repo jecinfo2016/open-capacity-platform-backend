@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        This example shows how to log data sent on two hardcoded topics: 
+            1. pre/home/livingroom/temperature 
+            2. pre/home/livingroom/humidity. 
+     -->
+
+    <bean id="YuyaoBrokerDescriptor" class="org.opentsdb.BrokerDescriptor">
+        <constructor-arg name="serverURI" value="tcp://61.164.218.155:1613" />
+        <constructor-arg name="username" value="jecinfo" />
+        <constructor-arg name="password" value="jecinfo2016" />
+    </bean>
+
+    <!-- 正式版mqtt地址 -->
+    <!--    <bean id="YuyaoBrokerDescriptor" class="org.opentsdb.BrokerDescriptor">-->
+    <!--        <constructor-arg name="serverURI" value="tcp://172.16.55.186:1883" />-->
+    <!--        <constructor-arg name="username" value="" />-->
+    <!--        <constructor-arg name="password" value="" />-->
+    <!--    </bean>-->
+
+    <!-- DESTINATIONS -->
+    <!-- Choose between connector for InfluxDB v0.9 or v0.8 (bean InfluxDBv09 
+        or InfluxDBv08).
+    -->
+
+    <!-- PAYLOAD PARSERS -->
+    <!-- 
+        LiteralParser is a parser where measurement name and field name are 
+        hard configured. Parser just tries to interpret message payload as a 
+        float number value e.g.: 123 or 45.2. http://172.16.55.187:4242
+     -->
+    <bean id="OpenTSDB" class="org.opentsdb.HttpClientImpl">
+        <constructor-arg name="serviceUrl" value="http://172.16.55.187:4242" />
+    </bean>
+
+    <bean id="YuyaoAirParser" class="org.opentsdb.parser.PipeDeviceData">
+        <constructor-arg name="calibrationAPI" value="http://39.104.68.199:5000/api/v1/air/intel_calibration/yuyao" />
+    </bean>
+
+    <!-- FILTER RULES -->
+    <!-- I do not want to log any retained or duplicate message. Probably they 
+        are already written into DB.  
+
+        RejectRetainedOrDuplicate matches any message where duplicate or 
+        retained flag is set.
+        If match is true, message processing is aborted.
+     -->
+
+    <!-- Parse message sent on "pre/home/livingroom/temperature" topic name.
+
+        AcceptWildcardRule matches topic name against wildcard string. Wildcard
+        is an expression where characters with special meaning are:
+           - star (*) - any number of any characters
+           - question mark (?) - exactly one character
+
+        If match is true, message is processed by PayloadParser. Default 
+        behavior is:
+          - If parsing is successful further processing is aborted.
+          - If parsing is fails, message processing continues to next rule.
+     -->
+
+
+    <bean id="pipeRule" class="org.opentsdb.rule.AcceptWildcardRule">
+        <constructor-arg name="destination" ref="OpenTSDB" />
+        <constructor-arg name="wildcardPattern" value="AMR2.0/JiaXing" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/liusu" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/yali" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/yongliang" />
+        <constructor-arg name="wildcardPattern" value="NLM2.0/WuDi" />
+        <constructor-arg name="payloadParser" ref="YuyaoAirParser" />
+    </bean>
+
+
+
+    <!-- APPLICATION -->
+    <bean class="org.opentsdb.device.Mqtt2OpenTSDB"
+          init-method="start">
+        <constructor-arg name="brokerDescriptor" ref="YuyaoBrokerDescriptor" />
+
+        <constructor-arg name="destinations">
+            <list>
+                <ref bean="OpenTSDB" />
+
+            </list>
+        </constructor-arg>
+
+        <constructor-arg name="filterRules">
+            <list>
+                <ref bean="pipeRule" />
+            </list>
+        </constructor-arg>
+
+        <!--  List of topic names to subscribe to -->
+        <property name="subscribedTopicNames">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+</beans>

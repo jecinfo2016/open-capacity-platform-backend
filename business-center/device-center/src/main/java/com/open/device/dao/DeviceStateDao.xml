@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceStateDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceState" id="DeviceStateMap">
+        <result property="id" column="id"/>
+        <result property="typeId" column="type_id"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into device_state(id,type_id,status,create_time,update_time,remarks)
+        values (#{id},#{typeId},#{status},#{createTime},#{updateTime},#{remarks})
+    </insert>
+
+    <update id="update">
+        update device_state
+        <set>
+            <if test="typeId != null">
+                type_id = #{typeId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_state where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceState">
+        select * from device_state t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                and t.id like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="searchKey != null and searchKey != '' and searchKey=='typeId'">
+                and t.type_id like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="searchKey != null and searchKey != '' and searchKey=='status'">
+                and t.status like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="searchKey != null and searchKey != '' and searchKey=='createTime'">
+                and t.create_time like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="searchKey != null and searchKey != '' and searchKey=='updateTime'">
+                and t.update_time like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="searchKey != null and searchKey != '' and searchKey=='remarks'">
+                and t.remarks like concat('%', #{searchValue}, '%')
+            </if>
+        </where>
+    </sql>
+</mapper>

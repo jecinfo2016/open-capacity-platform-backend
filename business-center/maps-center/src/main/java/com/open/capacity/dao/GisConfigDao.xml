@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.dao.GisConfigDao">
+    <!--通过appid获取高德地图key-->
+    <select id="getAmapKey" resultType="String">
+        SELECT amap_key FROM gis_config WHERE app_id = #{appId}
+    </select>
+</mapper>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.udp.nb.mapper.AirSwitchMapper">
+	<insert id="save" parameterType="com.udp.nb.entity.AirSwitchDO" useGeneratedKeys="true" keyProperty="alarmId">
+		insert into alarm_air_switch(
+			`type`,
+			`device_id`,
+			`alarm_type`,
+			`alarm_time`,
+			`hostid`,
+			`mac`,
+			`nno`
+		)
+		values
+		(
+			#{type},
+			#{deviceId},
+			#{alarmType},
+			#{alarmTime},
+			#{hostid},
+			#{mac},
+			#{nno}
+		)
+	</insert>
+	<insert id="saveAirSwitchCurrent" parameterType="com.udp.nb.entity.AirSwitchDO" useGeneratedKeys="true" keyProperty="alarmId">
+		insert into alarm_air_switch_current
+		(
+			`type`,
+			`device_id`,
+			`alarm_type`,
+			`alarm_time`,
+			`hostid`,
+			`mac`,
+			`nno`
+		)
+		values
+		(
+			#{type},
+			#{deviceId},
+			#{alarmType},
+			#{alarmTime},
+			#{hostid},
+			#{mac},
+			#{nno}
+		)
+	</insert>
+	<!-- 此表不用了-->
+	<insert id="insertDeviceStatus" parameterType="com.udp.nb.entity.DeviceStatusDO"
+			useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO `device_status`
+		(
+			`device_id`,
+			`status`,
+			`temperature`,
+			`current`,
+			`voltage`,
+			`power`,
+			`recordtime`,
+			`hostid`,
+			`nno`,
+			`mac`,
+			`openstatus`,
+			`alarmstatus`,
+			`type`
+		)
+		values
+		(
+			#{deviceId},
+			#{status},
+			#{temperature},
+			#{current},
+			#{voltage},
+			#{power},
+			#{recordtime},
+			#{hostid},
+			#{nno},
+			#{mac},
+			#{openstatus},
+			#{alarmstatus},
+			#{type}
+		)
+	</insert>
+
+	<!-- 此表不用了-->
+	<insert id="insertDeviceStatusCurrent" parameterType="com.udp.nb.entity.DeviceStatusDO"
+			useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO `device_status_current`
+		(
+			`device_id`,
+			`status`,
+			`temperature`,
+			`current`,
+			`voltage`,
+			`power`,
+			`recordtime`,
+			`hostid`,
+			`nno`,
+			`mac`,
+			`openstatus`,
+			`alarmstatus`,
+			`type`
+		)
+		values
+		(
+			#{deviceId},
+			#{status},
+			#{temperature},
+			#{current},
+			#{voltage},
+			#{power},
+			#{recordtime},
+			#{hostid},
+			#{nno},
+			#{mac},
+			#{openstatus},
+			#{alarmstatus},
+			#{type}
+		)
+	</insert>
+
+	<select id="getDeviceStatusList" parameterType="java.util.Map" resultType="com.udp.nb.entity.DeviceStatusDO">
+	SELECT
+	*
+	FROM
+	device_status
+	<where>
+		<if test="hostid != null  and hostid != ''">
+			and hostid= #{hostid}
+		</if>
+		<if test="nno != null  and nno != ''">
+			and nno= #{nno}
+		</if>
+	</where>
+	order by id desc
+	<if test="offset != null and limit != null">
+		limit #{offset}, #{limit}
+	</if>
+</select>
+
+	<select id="getDeviceStatusCurrentList" parameterType="java.util.Map" resultType="com.udp.nb.entity.DeviceStatusDO">
+		SELECT t.*,t.device_id deviceId FROM device_status_current t
+		<where>
+			<if test="device_id != null  and device_id != ''">
+				and device_id= #{device_id}
+			</if>
+			<if test="hostid != null  and hostid != ''">
+				and hostid= #{hostid}
+			</if>
+			<if test="nno != null  and nno != ''">
+				and nno= #{nno}
+			</if>
+			<if test="mac != null  and mac != ''">
+				and mac= #{mac}
+			</if>
+		</where>
+		order by id
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="getAirSwitchCurrentList" parameterType="java.util.Map" resultType="com.udp.nb.entity.AirSwitchDO">
+		select alarm_id alarmId,`type`,`device_id` deviceId,`alarm_type` alarmType,`alarm_time` alarmTime,`hostid`,`nno` from alarm_air_switch_current t
+		<where>
+			<if test="device_id != null  and device_id != ''">
+				and device_id= #{device_id}
+			</if>
+			<if test="hostid != null  and hostid != ''">
+				and hostid= #{hostid}
+			</if>
+			<if test="nno != null  and nno != ''">
+				and nno= #{nno}
+			</if>
+			<if test="mac != null  and mac != ''">
+				and mac= #{mac}
+			</if>
+		</where>
+		order by alarm_id
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<!-- 1 到devce表中，根据device_code（对应电箱号 HOST ID），找到对应的device_id-->
+	<select id="getDeviceInfo" parameterType="String" resultType="String">
+		SELECT
+				device.device_id
+			FROM
+			device
+			where device.mac= #{mac} LIMIT 1
+	</select>
+
+
+	<select id="getDeviceMac" parameterType="String" resultType="String">
+		SELECT
+				device.mac
+			FROM
+			device
+			where device.device_id= #{device_id} LIMIT 1
+	</select>
+
+
+	<!--2、到t_air_switch_line表中，根据device_id和nno（节点号），找到id； -->
+	<select id="getAirSwitchLine" parameterType="com.udp.nb.entity.TAirSwitchLine"
+			resultType="com.udp.nb.entity.TAirSwitchLine">
+		SELECT
+		id,
+		device_id,
+		nno,
+		`name`,
+		create_time,
+		create_name,
+		update_time,
+		update_name
+		FROM
+		t_air_switch_line t
+		<where>
+			<if test="deviceId != null">
+				AND device_id = #{deviceId}
+			</if>
+			<if test="nno != null">
+				AND nno = #{nno}
+			</if>
+		</where>
+		LIMIT 1
+	</select>
+
+
+	<!-- 3.把数据插入 t_line_record表中，line_id为步骤2中的id；state为1-->
+	<insert id="insertTLineRecord" parameterType="com.udp.nb.entity.TLineRecordDO"
+			useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO `t_line_record`
+			(
+					line_id,
+					state,
+					power,
+					voltage,
+					current,
+					temperature,
+					leakage_curre,
+					record_time,
+					record_type,
+					create_time,
+					create_name
+			)
+			values
+			(
+				#{lineId},
+				#{state},
+				#{power},
+				#{voltage},
+				#{current},
+				#{temperature},
+				#{leakageCurre},
+				#{recordTime},
+				#{recordType},
+				#{createTime},
+				#{createName}
+			)
+	</insert>
+
+	<insert id="insertTTotalRecord" parameterType="com.udp.nb.entity.TTotalRecordDO"
+			useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO `t_total_record`
+			(
+					device_id,hostid,nno,dn,voltage,leakage_curre,temperature,current,ps,mac,
+					record_time,
+					record_type,
+					create_time,
+					create_name
+			)
+			values
+			(
+				#{deviceId},#{hostid},#{nno},#{dn},#{voltage},#{leakageCurre},#{temperature},#{current},#{ps},#{mac},
+				#{recordTime},#{recordType},
+				#{createTime},
+				#{createName}
+			)
+	</insert>
+
+	<delete id="deleteAirSwitchCurrent" parameterType="String">
+		delete from alarm_air_switch_current where mac= #{mac}
+	</delete>
+
+	<delete id="deleteDeviceStatusCurrent" parameterType="String">
+		delete from device_status_current where mac= #{mac}
+	</delete>
+
+
+
+	<insert id="insertMessageLog" parameterType="com.udp.nb.entity.MessageLog"
+			useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO `message_log`
+		(
+		msg_id,
+		msg,
+		receiveHttpTime,
+		receiptTime,
+		sendTime
+		)
+		values
+		(
+			#{msg_id},
+			#{msg},
+			#{receiveHttpTime},
+			#{receiptTime},
+			#{sendTime}
+		)
+	</insert>
+</mapper>
+

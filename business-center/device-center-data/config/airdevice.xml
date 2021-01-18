@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        This example shows how to log data sent on two hardcoded topics: 
+            1. pre/home/livingroom/temperature 
+            2. pre/home/livingroom/humidity. 
+     -->
+
+    <bean id="YuyaoBrokerDescriptor" class="org.opentsdb.BrokerDescriptor">
+        <constructor-arg name="serverURI" value="tcp://39.104.68.199:61613" />
+        <constructor-arg name="username" value="" />
+        <constructor-arg name="password" value="" />
+    </bean>
+
+    <!-- 正式版mqtt地址 -->
+<!--    <bean id="YuyaoBrokerDescriptor" class="org.opentsdb.BrokerDescriptor">-->
+<!--        <constructor-arg name="serverURI" value="tcp://172.16.55.186:1883" />-->
+<!--        <constructor-arg name="username" value="" />-->
+<!--        <constructor-arg name="password" value="" />-->
+<!--    </bean>-->
+    <!-- DESTINATIONS -->
+    <!-- Choose between connector for InfluxDB v0.9 or v0.8 (bean InfluxDBv09 
+        or InfluxDBv08).
+    -->
+
+    <!-- PAYLOAD PARSERS -->
+    <!-- 
+        LiteralParser is a parser where measurement name and field name are 
+        hard configured. Parser just tries to interpret message payload as a 
+        float number value e.g.: 123 or 45.2. 
+     -->
+    <bean id="OpenTSDB" class="org.opentsdb.HttpClientImpl">
+<!--        <constructor-arg name="serviceUrl" value="http://172.16.55.187:4242" />-->
+        <constructor-arg name="serviceUrl" value="http://localhost:61242" />
+    </bean>
+
+    <bean id="YuyaoAirParser" class="org.opentsdb.parser.AirDeviceData">
+        <constructor-arg name="calibrationAPI" value="http://localhost:5000/api/v1/air/intel_calibration/yuyao" />
+    </bean>
+
+    <!-- FILTER RULES -->
+    <!-- I do not want to log any retained or duplicate message. Probably they 
+        are already written into DB.  
+
+        RejectRetainedOrDuplicate matches any message where duplicate or 
+        retained flag is set.
+        If match is true, message processing is aborted.
+     -->
+
+    <!-- Parse message sent on "pre/home/livingroom/temperature" topic name.
+
+        AcceptWildcardRule matches topic name against wildcard string. Wildcard
+        is an expression where characters with special meaning are:
+           - star (*) - any number of any characters
+           - question mark (?) - exactly one character
+
+        If match is true, message is processed by PayloadParser. Default 
+        behavior is:
+          - If parsing is successful further processing is aborted.
+          - If parsing is fails, message processing continues to next rule.
+     -->
+
+
+    <bean id="AirRule" class="org.opentsdb.rule.AcceptWildcardRule">
+        <constructor-arg name="destination" ref="OpenTSDB" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/YuYao" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/BEICHEN" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/water" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/rwqm" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/vocs" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/liaoning" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/ShaoXing" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/JIAXING" />
+        <constructor-arg name="wildcardPattern" value="AQM2.0/JiaXing" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/watermeter" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000021" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000023" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000027" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000028" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000029" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000030" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000036" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000076" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000081" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000086" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000098" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000099" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000106" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000107" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000109" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000110" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000111" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000112" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000113" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000115" />
+        <constructor-arg name="wildcardPattern" value="jecinfo/220620000116" />
+        <constructor-arg name="payloadParser" ref="YuyaoAirParser" />
+    </bean>
+
+
+
+    <!-- APPLICATION -->
+    <bean class="org.opentsdb.device.MyMqtt2OpenTSDB"
+          init-method="start">
+        <constructor-arg name="brokerDescriptor" ref="YuyaoBrokerDescriptor" />
+
+        <constructor-arg name="destinations">
+            <list>
+                <ref bean="OpenTSDB" />
+
+            </list>
+        </constructor-arg>
+
+        <constructor-arg name="filterRules">
+            <list>
+                <ref bean="AirRule" />
+            </list>
+        </constructor-arg>
+
+        <!--  List of topic names to subscribe to -->
+        <property name="subscribedTopicNames">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+</beans>

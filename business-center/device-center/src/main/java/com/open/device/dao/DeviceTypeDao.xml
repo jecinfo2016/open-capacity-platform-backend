@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceTypeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceType" id="deviceTypeMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into device_type(
+                                                                            name,
+                                                                            type,
+                                      ) values (
+                                                #{ name},
+                                                #{ type},
+                              )
+    </insert>
+
+    <update id="update">
+        update device_type
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="name != null">
+                    name = #{name},
+                </if>
+                            <if test="type != null">
+                    type = #{type},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_type where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceType">
+        select * from device_type t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='name'">
+                    and t.name like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='type'">
+                    and t.type like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

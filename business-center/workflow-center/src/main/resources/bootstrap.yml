@@ -1,0 +1,35 @@
+#端口配置
+server:
+  port: 7003   #固定端口
+#  port: ${randomServerPort.value[7000,7005]}  #随机端口
+#服务名称
+spring:
+  application:
+    name: workflow-center
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+#eureka client
+eureka:
+  client:
+    serviceUrl:
+#      defaultZone: http://192.168.3.39:1111/eureka
+#      defaultZone: http://127.0.0.1:1111/eureka
+      defaultZone: http://172.16.55.185:1111/eureka
+    registry-fetch-interval-seconds: 5
+    instance-info-replication-interval-seconds: 10
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${spring.application.instance_id:${server.port}}  #固定端口
+    #instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${spring.application.instance_id:${randomServerPort.value[7000,7005]}}  #随机端口
+    #instance-id: ${spring.application.name}:${docker.ipAddress}:${spring.application.instance_id:${server.port}}
+    lease-renewal-interval-in-seconds: 10  #每隔几秒告诉eureka服务器我还存活，用于心跳检测
+    lease-expiration-duration-in-seconds: 10 #如果心跳检测一直没有发送，10秒后会从eureka服务器中将此服务剔除
+    status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/doc.html #固定端口
+    #status-page-url: http://${spring.cloud.client.ip-address}:${randomServerPort.value[7000,7005]}/document.html #随机端口

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.video.dao.RecognizeResultDao">
+
+    <insert id="saveOne">
+        insert into recognize_result (id, task_id, pedestrians_json, base64, mill_sec, cnt)
+        VALUES (#{id}, #{taskId}, #{pedestriansJson}, #{base64}, #{millSec}, #{cnt})
+    </insert>
+
+    <select id="findByTaskId" resultType="com.open.capacity.video.entity.RecognizeResult">
+        select *
+        from recognize_result
+        where task_id = #{taskId} order by mill_sec limit #{page}, #{limit};
+    </select>
+</mapper>

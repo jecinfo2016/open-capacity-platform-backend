@@ -1,0 +1,36 @@
+spring:
+  servlet:
+    multipart:
+      # 上传文件大小设置
+      max-file-size: 100MB
+      max-request-size: 100MB
+  kafka:
+    topic: video_process_test_6
+    bootstrap-servers: 192.168.3.62:9092
+    producer:
+      retries: 1 #每次批量发送的数据
+      batch-size: 20971520
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+
+    consumer:
+      group-id: test-consumer-group
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 100
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      max-poll-records: 20
+    properties:
+      max.request.size: 20971520
+
+spark:
+  master:
+#    url: local[2]
+    url: spark://spark01:7077
+
+
+file:
+  path: F:/video

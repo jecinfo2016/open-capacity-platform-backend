@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.developer.dma.dao.NDmaInfoDao">
+
+    <resultMap type="com.open.capacity.developer.dma.entity.NDmaInfo" id="nDmaInfoMap">
+        <result property="id" column="id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="name" column="name"/>
+        <result property="households" column="households"/>
+        <result property="centerLnglat" column="center_lnglat"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="fullIds" column="full_ids"/>
+        <result property="status" column="status"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="leaf" column="leaf"/>
+        <result property="nodes" column="nodes"/>
+    </resultMap>
+
+
+    <resultMap type="com.open.capacity.developer.dma.entity.NDmaInfo" id="DmaTreeVoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="households" column="households" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="areaId" column="area_id" jdbcType="VARCHAR"/>
+        <result property="centerLnglat" column="center_lnglat" jdbcType="VARCHAR"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="nodes" column="nodes" jdbcType="VARCHAR"/>
+        <result property="leaf" column="leaf" jdbcType="BOOLEAN"/>
+        <result property="isShow" column="is_show" jdbcType="BOOLEAN"/>
+        <collection property="children" column="parentId=id" ofType="com.open.capacity.developer.dma.entity.NDmaInfo"
+                    select="queryTreeList"></collection>
+    </resultMap>
+
+    <insert id="save">
+        insert into n_dma_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="areaId != null and areaId != ''">
+                area_id,
+            </if>
+            <if test="households != null">
+                households,
+            </if>
+            <if test="centerLnglat != null and centerLnglat != ''">
+                center_lnglat,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="sortNo != null">
+                sort_no,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="leaf != null">
+                leaf,
+            </if>
+            <if test="nodes != null">
+                nodes
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaId != null and areaId != ''">
+                #{areaId},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="households != null">
+                #{households},
+            </if>
+            <if test="centerLnglat != null and centerLnglat != ''">
+                #{centerLnglat},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="sortNo != null">
+                #{sortNo},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="leaf != null">
+                #{leaf},
+            </if>
+            <if test="nodes != null">
+                #{nodes}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update">
+        update n_dma_info
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="households != null">
+                households = #{households},
+            </if>
+            <if test="centerLnglat != null and centerLnglat != ''">
+                center_lnglat = #{centerLnglat},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="fullIds != null">
+                full_ids = #{fullIds},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="sortNo != null">
+                sort_no = #{sortNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="leaf != null">
+                leaf = #{leaf},
+            </if>
+            <if test="nodes != null">
+                nodes = #{nodes},
+            </if>
+        </set>
+        where id = #{id}
+        and status &lt;&gt; 1
+    </update>
+
+    <update id="moveDmaById">
+        UPDATE
+        <if test="up !=null and up ==0">
+            n_dma_info d, n_dma_info t, (SELECT id,sort_no FROM n_dma_info WHERE sort_no &lt; (SELECT sort_no FROM
+            n_dma_info
+            WHERE
+            id=#{id}) and status &lt;&gt; 1 and parent_id=(SELECT parent_id FROM n_dma_info WHERE id=#{id}) ORDER BY
+            sort_no
+            desc limit 1) a
+            set
+            d.sort_no=a.sort_no,t.sort_no=d.sort_no
+        </if>
+        <if test="up !=null and up==1">
+            n_dma_info d, n_dma_info t, (SELECT id,sort_no FROM n_dma_info WHERE sort_no &gt; (SELECT sort_no FROM
+            n_dma_info
+            WHERE
+            id=#{id}) and status &lt;&gt; 1 and parent_id=(SELECT parent_id FROM n_dma_info WHERE id=#{id}) ORDER BY
+            sort_no
+            limit 1) a
+            set
+            d.sort_no=a.sort_no,t.sort_no=d.sort_no
+        </if>
+        WHERE
+        d.id=#{id} and d.status &lt;&gt;1 and t.id=a.id
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from n_dma_info where id = #{id}
+    </delete>
+
+    <!--查询所有节点（树结构）-->
+    <select id="queryTreeList" resultMap="DmaTreeVoMap">
+        select
+        id, name, center_lnglat, parent_id, leaf, households, nodes
+        from n_dma_info
+        where status &lt;&gt; 1
+        <if test="parentId == null">
+            and parent_id is null
+        </if>
+        <if test="parentId != null">
+            and parent_id = #{parentId}
+        </if>
+        order by sort_no
+    </select>
+
+    <select id="findAll" resultMap="nDmaInfoMap">
+       select *
+        from n_dma_info
+        where leaf = true and status !=1
+    </select>
+
+    <select id="queryByParentIdLast" resultMap="nDmaInfoMap">
+        select max(sort_no) sort_no
+        from n_dma_info
+        where parent_id = #{parentId}
+          and status != 1
+    </select>
+
+</mapper>

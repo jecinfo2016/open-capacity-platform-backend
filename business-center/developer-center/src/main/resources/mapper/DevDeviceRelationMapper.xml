@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.open.capacity.developer.device.dao.DevDeviceRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.open.capacity.developer.device.entity.DevDeviceRelation">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="client_id" property="clientId" jdbcType="INTEGER"/>
+        <result column="dma_id" property="dmaId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="device_id" property="deviceId" jdbcType="INTEGER"/>
+        <result column="install_address" property="installAddress" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, client_id, dma_id, create_time, device_id, install_address
+    </sql>
+
+    <!--新增-->
+    <insert id="insertSelective" parameterType="com.open.capacity.developer.device.entity.DevDeviceRelation" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into dev_device_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">
+                client_id,
+            </if>
+            <if test="dmaId != null">
+                dma_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="deviceId != null">
+                device_id,
+            </if>
+            <if test="installAddress != null">
+                install_address,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">
+                #{clientId},
+            </if>
+            <if test="dmaId != null">
+                #{dmaId},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="deviceId != null">
+                #{deviceId},
+            </if>
+            <if test="installAddress != null and installAddress!=''">
+                #{installAddress},
+            </if>
+        </trim>
+    </insert>
+
+    <!--根据条件查询开发者平台下设备信息-->
+    <select id="queryDeviceInfoByParams" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT v.id,v.client_id,d.name device_name,d.device_sn,t.name device_type_name,n.name dma_name,t.tags,v.install_address
+        FROM dev_device_relation v
+        LEFT JOIN device_info d ON v.device_id=d.id
+        LEFT JOIN device_type t ON d.devce_type_id=t.type
+        LEFT JOIN n_dma_info n ON v.dma_id=n.id
+        WHERE v.client_id=#{clientId}
+        <if test="deviceTypeId!=null and deviceTypeId!=''">
+            AND d.devce_type_id=#{deviceTypeId}
+        </if>
+        <if test="dmaId!=null and dmaId!=''">
+            AND v.dma_id=#{dmaId}
+        </if>
+        <if test="deviceSn!=null and deviceSn!=''">
+            AND d.device_sn like concat('%', #{deviceSn}, '%')
+        </if>
+        <if test="deviceName!=null and deviceName!=''">
+            AND d.name like concat('%', #{deviceName}, '%')
+        </if>
+    </select>
+
+    <delete id="deleteDevDeviceRelation" parameterType="java.lang.Integer">
+            DELETE FROM dev_device_relation WHERE id=#{relationId}
+    </delete>
+
+    <update id="updateDevDeviceRelation" parameterType="com.open.capacity.developer.device.entity.DevDeviceRelation">
+            UPDATE dev_device_relation
+            <set>
+                <if test="installAddress!=null and installAddress!=''">
+                    install_address=#{installAddress},
+                </if>
+                <if test="dmaId!=null and dmaId!=''">
+                    dma_id=#{dmaId},
+                </if>
+            </set>
+            where id=#{id}
+    </update>
+</mapper>

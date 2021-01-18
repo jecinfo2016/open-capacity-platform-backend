@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.open.capacity.client.mapper.WhiteListMapper" >
+  <resultMap id="BaseResultMap" type="com.open.capacity.client.entity.WhiteList" >
+    <id column="id" property="id" jdbcType="BIT" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, path, createTime, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_white_list
+    where id = #{id,jdbcType=BIT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_white_list
+    where id = #{id,jdbcType=BIT}
+  </delete>
+  <insert id="insert" parameterType="com.open.capacity.client.entity.WhiteList" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_white_list (id, path, createTime, updateTime)
+    values (#{id,jdbcType=BIT}, #{path,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.open.capacity.client.entity.WhiteList" >
+    update sys_white_list
+    set path = #{path,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIT}
+  </update>
+
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_white_list
+  </select>
+
+</mapper>

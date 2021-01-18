@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.video.dao.TaskDao">
+
+    <insert id="saveOne">
+        insert into task(task_id, status, start_time, cnt, `type`)
+        values (#{taskId}, #{status}, #{startTime}, #{cnt}, #{type})
+    </insert>
+
+    <update id="updateOne">
+        update task
+        set `status` = #{status},
+        <if test="finishedTime != null">
+            finished_time = #{finishedTime},
+        </if>
+        duration = #{duration},
+        cnt = #{cnt}
+        where task_id = #{taskId}
+    </update>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.dao.NDmaInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.capacity.entity.NDmaInfo" id="nDmaInfoMap">
+        <result property="id" column="id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="name" column="name"/>
+        <result property="households" column="households"/>
+        <result property="centerLnglat" column="center_lnglat"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="fullIds" column="full_ids"/>
+        <result property="status" column="status"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="leaf" column="leaf"/>
+        <result property="nodes" column="nodes"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into n_dma_info(
+                                                        id,
+                                                                            area_id,
+                                                                            name,
+                                                                            households,
+                                                                            center_lnglat,
+                                                                            parent_id,
+                                                                            full_ids,
+                                                                            status,
+                                                                            sort_no,
+                                                                            create_time,
+                                                                            update_time,
+                                                                            leaf,
+                                                                            nodes
+                                      ) values (
+                                    #{ id},
+                                                #{ areaId},
+                                                #{ name},
+                                                #{ households},
+                                                #{ centerLnglat},
+                                                #{ parentId},
+                                                #{ fullIds},
+                                                #{ status},
+                                                #{ sortNo},
+                                                #{ createTime},
+                                                #{ updateTime},
+                                                #{ leaf},
+                                                #{nodes}
+                              )
+    </insert>
+
+    <update id="update">
+        update n_dma_info
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="area_id != null">
+                    area_id = #{areaId},
+                </if>
+                            <if test="name != null">
+                    name = #{name},
+                </if>
+                            <if test="households != null">
+                    households = #{households},
+                </if>
+                            <if test="center_lnglat != null">
+                    center_lnglat = #{centerLnglat},
+                </if>
+                            <if test="parent_id != null">
+                    parent_id = #{parentId},
+                </if>
+                            <if test="full_ids != null">
+                    full_ids = #{fullIds},
+                </if>
+                            <if test="status != null">
+                    status = #{status},
+                </if>
+                            <if test="sort_no != null">
+                    sort_no = #{sortNo},
+                </if>
+                            <if test="create_time != null">
+                    create_time = #{createTime},
+                </if>
+                            <if test="update_time != null">
+                    update_time = #{updateTime},
+                </if>
+                            <if test="leaf != null">
+                    leaf = #{leaf},
+                </if>
+                            <if test="nodes != null">
+                    nodes = #{nodes},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from n_dma_info where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.capacity.entity.NDmaInfo">
+        select * from n_dma_info t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='area_id'">
+                    and t.area_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='name'">
+                    and t.name like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='households'">
+                    and t.households like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='center_lnglat'">
+                    and t.center_lnglat like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='parent_id'">
+                    and t.parent_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='full_ids'">
+                    and t.full_ids like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='status'">
+                    and t.status like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='sort_no'">
+                    and t.sort_no like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='leaf'">
+                    and t.leaf like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='nodes'">
+                    and t.nodes like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

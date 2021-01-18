@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.user.dao.SysRoleMenuDao">
+
+	<resultMap id="menuPermission" type="com.open.capacity.common.model.SysMenu">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="path" column="path"/>
+		<result property="css" column="css"/>
+		<result property="createTime" column="createTime"/>
+		<collection property="children" ofType="com.open.capacity.common.model.SysMenu">
+			<id property="id" column="pId"/>
+			<result property="url" column="pUrl"/>
+			<result property="name" column="pName"/>
+		</collection>
+	</resultMap>
+
+	<resultMap id="menus" type="com.open.capacity.common.model.SysMenu">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="path" column="path"/>
+		<result property="css" column="css"/>
+		<result property="sort" column="sort"/>
+		<result property="createTime" column="createTime"/>
+		<collection property="children" ofType="com.open.capacity.common.model.SysMenu">
+			<id property="id" column="pId"/>
+			<result property="name" column="pName"/>
+			<result property="url" column="pUrl"/>
+			<result property="path" column="pPath"/>
+			<result property="css" column="pCss"/>
+			<result property="sort" column="pSort"/>
+		</collection>
+	</resultMap>
+
+	<update id="delete">
+		delete from sys_role_menu
+		<where>
+			<if test="roleId != null">
+				and roleId = #{roleId}
+			</if>
+			<if test="menuId != null">
+				and menuId = #{menuId}
+			</if>
+		</where>
+	</update>
+
+	<select id="findMenusByRoleIds" resultMap="menus">
+		SELECT
+		me.`id` AS id,
+		me.`name` AS NAME,
+		me.`url` AS url,
+		me.`path` AS path,
+		me.`css`,
+		me.`sort`,
+		me.`createTime` AS createTime,
+		p.`id` AS pId,
+		p.`name` AS pName,
+		p.`url` AS pUrl,
+		p.`path` AS pPath,
+		p.`css` AS pCss,
+		p.`sort` AS pSort
+		FROM
+		sys_menu me
+		LEFT JOIN sys_menu p LEFT JOIN sys_role_menu m ON p.`id` = m.menuId
+		ON me.`id` = p.`parentId` WHERE m.roleId IN
+		<foreach collection="roleIds" index="index" item="roleId"
+				 open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+		AND me.`hidden` = 0 AND p.`hidden` = 0
+		ORDER BY me.`sort`,p.`sort` ASC
+	</select>
+
+	<select id="findAdminMenus" resultMap="menus">
+		SELECT
+		  me.`id` AS id,
+		  me.`name` AS NAME,
+		  me.`url` AS url,
+		  me.`path` AS path,
+		  me.`css`,
+		  me.`sort`,
+		  me.`createTime` AS createTime,
+		  p.`id` AS pId,
+		  p.`name` AS pName,
+		  p.`url` AS pUrl,
+		  p.`path` AS pPath,
+		  p.`css` AS pCss,
+		  p.`sort` AS pSort
+		FROM
+		  sys_menu me
+		  LEFT JOIN sys_menu p
+		  LEFT JOIN sys_role_menu m
+			ON p.`id` = m.menuId
+			ON me.`id` = p.`parentId`
+		WHERE me.`hidden` = 0
+		  AND p.`hidden` = 0
+		GROUP BY p.`id`
+		ORDER BY me.`sort`,
+		  p.`sort` ASC
+	</select>
+
+	<!--根据菜单筛选权限，字符加10000 菜单id 和权限id 相同前端tree 导致勾选-->
+	<select id="menusPermission" resultMap="menuPermission">
+		SELECT
+		  CONCAT(me.`id`, 10000) AS id,
+		  me.`name` AS name,
+		  me.`url` AS url,
+		  me.`path` AS path,
+		  me.`css`,
+		  me.`createTime` AS createTime,
+		  m.id AS pId,
+		  m.`name` AS pName,
+		  m.`permission` AS pUrl
+		FROM
+		  sys_menu me
+		  JOIN sys_permission m
+			ON me.`id` = m.`menuId`
+	</select>
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.open.device.dao.DeviceMetricDao" >
+
+  <resultMap id="BaseResultMap" type="com.open.device.model.DeviceMetric" >
+    <id column="id" property="id" jdbcType="BIT" />
+    <result column="equipment_type" property="equipmentType" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="BIT" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="metric" property="metric" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, equipment_type, description, metric, createTime
+  </sql>
+
+  <sql id="where">
+    <where>
+        1=1
+      <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+        and dm.id = #{searchValue}
+      </if>
+      <if test="searchKey != null and searchKey != '' and searchKey=='equipmentType'">
+        and dm.equipment_type like concat('%', #{searchValue}, '%')
+      </if>
+      <if test="searchKey != null and searchKey != '' and searchKey=='typeId'">
+        and dm.type_id like concat('%', #{searchValue}, '%')
+      </if>
+      <if test="searchKey != null and searchKey != '' and searchKey=='description'">
+        and dm.description like concat('%', #{searchValue}, '%')
+      </if>
+      <if test="searchKey != null and searchKey != '' and searchKey=='metric'">
+        and dm.metric like concat('%', #{searchValue}, '%')
+      </if>
+      <if test="searchKey != null and searchKey != '' and searchKey=='createTime'">
+        and dm.create_time = #{searchValue}
+      </if>
+    </where>
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from device_metric
+    where id = #{id,jdbcType=BIT}
+  </select>
+
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from device_metric
+    where id = #{id,jdbcType=BIT}
+  </delete>
+
+  <insert id="save" parameterType="com.open.device.model.DeviceMetric" useGeneratedKeys="true" keyProperty="id">
+    insert into device_metric (id, equipment_type, type_id, description, metric, createTime)
+    values (#{id,jdbcType=BIT}, #{equipmentType,jdbcType=VARCHAR}, #{typeId,jdbcType=BIT}, #{description,jdbcType=VARCHAR},
+    #{metric,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="update" parameterType="com.open.device.model.DeviceMetric" >
+    update device_metric
+    set equipment_type = #{equipmentType,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=BIT},
+      description = #{description,jdbcType=VARCHAR},
+      metric = #{metric,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIT}
+  </update>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from device_metric dm
+    <include refid="where"/>
+  </select>
+
+</mapper>

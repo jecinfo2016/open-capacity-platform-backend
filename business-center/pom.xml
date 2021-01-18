@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.open.capacity</groupId>
+        <artifactId>open-capacity-platform-backend</artifactId>
+        <version>2.0.1</version>
+    </parent>
+    <artifactId>business-center</artifactId>
+    <packaging>pom</packaging>
+    <description>业务中心</description>
+
+    <modules>
+        <!-- 用户中心 -->
+        <module>user-center</module>
+        <!-- 文件中心 -->
+        <module>file-center</module>
+        <!-- 代码生成器 -->
+        <module>generator-center</module>
+        <!-- 短信中心 -->
+        <module>sms-center</module>
+        <!--工作流-->
+        <module>workflow-center</module>
+        <!--设备服务-->
+        <module>device-center</module>
+        <!--地图服务-->
+        <module>maps-center</module>
+        <module>dma-center</module>
+        <!--管网模型转换服务-->
+        <module>epnaetgis-demo</module>
+        <!--服务监控-->
+        <module>service-monitor</module>
+        <!--设备数据上报opentsdb-->
+        <module>device-center-data</module>
+        <!--视频处理-->
+        <module>video-process-center</module>
+        <!--开发者平台-->
+        <module>developer-center</module>
+        <!--后台展示中心-->
+        <module>display-center</module>
+        <!--大气设备-->
+        <module>device-spims</module>
+        <module>data-backup-center</module>
+    </modules>
+</project>

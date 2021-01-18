@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceManufacturerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceManufacturer" id="deviceManufacturerMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="contacts" column="contacts"/>
+        <result property="phone" column="phone"/>
+        <result property="website" column="website"/>
+        <result property="description" column="description"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into device_manufacturer(
+                                                                            name,
+                                                                            address,
+                                                                            contacts,
+                                                                            phone,
+                                                                            website,
+                                                                            description,
+                                                                            create_by,
+                                                                            remark
+                                      ) values (
+                                                #{ name},
+                                                #{ address},
+                                                #{ contacts},
+                                                #{ phone},
+                                                #{ website},
+                                                #{ description},
+                                                #{ createBy},
+                                                #{remark}
+                              )
+    </insert>
+
+    <update id="update">
+        update device_manufacturer
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="name != null">
+                    name = #{name},
+                </if>
+                            <if test="address != null">
+                    address = #{address},
+                </if>
+                            <if test="contacts != null">
+                    contacts = #{contacts},
+                </if>
+                            <if test="phone != null">
+                    phone = #{phone},
+                </if>
+                            <if test="website != null">
+                    website = #{website},
+                </if>
+                            <if test="description != null">
+                    description = #{description},
+                </if>
+                            <if test="updateBy != null">
+                    update_by = #{updateBy},
+                </if>
+                            <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+                            <if test="remark != null">
+                    remark = #{remark},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_manufacturer where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceManufacturer">
+        select * from device_manufacturer t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='name'">
+                    and t.name like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='address'">
+                    and t.address like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='contacts'">
+                    and t.contacts like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='phone'">
+                    and t.phone like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='website'">
+                    and t.website like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='description'">
+                    and t.description like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_by'">
+                    and t.create_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_by'">
+                    and t.update_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='remark'">
+                    and t.remark like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

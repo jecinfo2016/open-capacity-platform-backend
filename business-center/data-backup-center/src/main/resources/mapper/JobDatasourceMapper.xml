@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.backup.dao.BackupDao">
+
+    <insert id="insertBackupInfo" parameterType="com.open.capacity.backup.entity.JobDatasource" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO job_jdbc_datasource(datasource_name,jdbc_username,jdbc_password,jdbc_url,comments,cron_str,status)
+        VALUES (#{datasourceName},#{jdbcUsername},#{jdbcPassword},#{jdbcUrl},#{comments},#{cronStr},0)
+    </insert>
+
+
+    <insert id="insertBackupHistroy" parameterType="com.open.capacity.backup.entity.JobBackupHistoryInfo">
+        INSERT INTO job_backup_history_info(jjd_id,file_name,status) VALUES (#{jjdId},#{fileName},#{status})
+    </insert>
+
+    <update id="updateBackUpInfo" parameterType="com.open.capacity.backup.entity.JobDatasource">
+        UPDATE job_jdbc_datasource
+        <set>
+            <if test="datasourceName!=null and datasourceName!=''">datasource_name = #{datasourceName},</if>
+            <if test="cronStr!=null and cronStr!=''">cron_str = #{cronStr},</if>
+            <if test="jdbcUsername!=null and jdbcUsername!=''">jdbc_username = #{jdbcUsername},</if>
+            <if test="jdbcPassword!=null and jdbcPassword!=''">jdbc_password = #{jdbcPassword},</if>
+            <if test="jdbcUrl!=null and jdbcUrl!=''">jdbc_url = #{jdbcUrl},</if>
+            <if test="comments!=null and comments!=''">comments = #{comments},</if>
+            <if test="jobInfoId!=null">job_info_id = #{jobInfoId},</if>
+            <if test="status!=null">status=#{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteBackupInfo" parameterType="java.lang.Long">
+          DELETE FROM  job_jdbc_datasource  WHERE id = #{id}
+    </delete>
+
+    <select id="queryJobDatasourceList" parameterType="java.util.Map"
+            resultType="com.open.capacity.backup.entity.JobDatasource">
+        SELECT
+        j.id,j.datasource_name,j.jdbc_username,j.jdbc_password,j.jdbc_url,j.`status`,j.cron_str,j.comments,j.job_info_id
+        FROM job_jdbc_datasource j
+        <where>
+            <if test="datasourceName!=null and datasourceName!=''">
+                j.datasource_name LIKE concat('%', #{datasourceName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="queryHistoryList" resultType="com.open.capacity.backup.entity.JobBackupHistoryInfo" parameterType="java.util.Map">
+            SELECT *  FROM job_backup_history_info h  WHERE h.jjd_id =#{id}
+    </select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.TaskOutputDao">
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.TaskOutput" id="deviceTaskOut">
+        <result property="id" column="id"/>
+        <result property="equipmentTag" column="equipment_tag"/>
+        <result property="equipmentTagValue" column="equipment_tag_value"/>
+        <result property="timesTamp" column="times_tamp"/>
+        <result property="taskId" column="task_id"/>
+        <result property="equipmentSns" column="equipment_sns"/>
+    </resultMap>
+
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from equipment_task_output where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.TaskOutput">
+        select * from equipment_task_output t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='equipment_tag_id'">
+                    and t.equipment_tag like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='equipment_tag_value'">
+                    and t.equipment_tag_value like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='times_tamp'">
+                    and t.times_tamp like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='task_id'">
+                    and t.task_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='equipment_sns'">
+                    and t.equipment_sns like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+
+    <insert id="save">
+        insert into equipment_task_output(
+        equipment_tag,
+        equipment_tag_value,
+        times_tamp,
+        task_id,
+        equipment_sns
+        ) values (
+        #{ equipmentTag},
+        #{ equipmentTagValue},
+        #{ timesTamp},
+        #{ taskId},
+        #{ equipmentSns}
+        )
+    </insert>
+
+    <select id="selectByStack" parameterType="java.util.Map" resultType="com.open.device.model.TaskOutput">
+        select * from equipment_task_output where task_id = #{taskId}
+    </select>
+</mapper>

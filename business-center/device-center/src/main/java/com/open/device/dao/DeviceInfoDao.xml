@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceInfo" id="deviceInfoMap">
+        <result property="id" column="id"/>
+        <result property="deviceSn" column="device_sn"/>
+        <result property="manufacturerId" column="manufacturer_id"/>
+        <result property="model" column="model"/>
+        <result property="name" column="name"/>
+        <result property="generationDate" column="generation_date"/>
+        <result property="equipmentLife" column="equipment_life"/>
+        <result property="devceTypeId" column="devce_type_id"/>
+        <result property="powerSupplyMode" column="power_supply_mode"/>
+        <result property="isIotDevice" column="is_iot_device"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <association property="style" javaType="com.open.device.model.DeviceType">
+            <id column="id" property="id"/>
+            <result column="typeName" property="name"/>
+            <result column="type" property="type"/>
+            <result column="create_time" property="createTime"/>
+            <result column="image" property="image"/>
+        </association>
+        <association property="deviceManufacturer" javaType="com.open.device.model.DeviceManufacturer">
+            <id column="id" property="id"/>
+            <result column="address" property="address"/>
+            <result column="manuName" property="name"/>
+            <result column="contacts" property="contacts"/>
+            <result column="phone" property="phone"/>
+            <result column="website" property="website"/>
+            <result column="description" property="description"/>
+            <result column="create_by" property="createBy"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_by" property="updateBy"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="remark" property="remark"/>
+        </association>
+        <association property="devicePower" javaType="com.open.device.model.DevicePower">
+            <id column="id" property="id"/>
+            <result column="device_id" property="deviceId"/>
+            <result column="state_of_charge" property="stateOfCharge"/>
+            <result column="voltage" property="voltage"/>
+            <result column="standard_voltage" property="standardVoltage"/>
+            <result column="full_charge" property="fullCharge"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+        <association property="deviceStatus" javaType="com.open.device.model.DeviceStatus">
+            <id column="id" property="id"/>
+            <result column="device_id" property="deviceId"/>
+            <result column="status" property="status"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="remarks" property="remarks"/>
+        </association>
+        <association property="deviceInstallInfo" javaType="com.open.device.model.DeviceInstallInfo">
+            <id column="id" property="id"/>
+            <result column="device_id" property="deviceId"/>
+            <result column="device_sn" property="deviceSn"/>
+            <result column="install_date" property="installDate"/>
+            <result column="latitude" property="latitude"/>
+            <result column="longitude" property="longitude"/>
+            <result column="install_address" property="installAddress"/>
+            <result column="create_time" property="createdTime"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="pic_url" property="picUrl"/>
+        </association>
+    </resultMap>
+
+
+    <resultMap type="com.open.device.model.DeviceInfo" id="PointMap">
+        <result property="id" column="id"/>
+        <result property="deviceSn" column="device_sn"/>
+        <result property="manufacturerId" column="manufacturer_id"/>
+        <result property="model" column="model"/>
+        <result property="name" column="name"/>
+        <result property="generationDate" column="generation_date"/>
+        <result property="equipmentLife" column="equipment_life"/>
+        <result property="devceTypeId" column="devce_type_id"/>
+        <result property="powerSupplyMode" column="power_supply_mode"/>
+        <result property="isIotDevice" column="is_iot_device"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <association property="style" javaType="com.open.device.model.DeviceType">
+            <id column="id" property="id"/>
+            <result column="typeName" property="name"/>
+            <result column="type" property="type"/>
+            <result column="create_time" property="createTime"/>
+            <result column="image" property="image"/>
+        </association>
+        <association property="deviceInstallInfo" javaType="com.open.device.model.DeviceInstallInfo">
+            <id column="id" property="id"/>
+            <result column="device_id" property="deviceId"/>
+            <result column="device_sn" property="deviceSn"/>
+            <result column="install_date" property="installDate"/>
+            <result column="latitude" property="latitude"/>
+            <result column="longitude" property="longitude"/>
+            <result column="install_address" property="installAddress"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="pic_url" property="picUrl"/>
+        </association>
+    </resultMap>
+
+
+    <!--设备基础信息包括：设备类型，设备出厂信息，设备厂商信息 -->
+    <select id="findByDeviceBasic" resultMap="deviceInfoMap">
+        SELECT a.*,b.`name`,b.`create_time`AS typeCreateTime,b.`name` AS typeName , c.*,c.`name`AS manuName FROM `device_info` AS a
+        LEFT JOIN `device_type` AS b ON a.`devce_type_id`=b.`type`
+        LEFT JOIN device_manufacturer AS c ON a.`manufacturer_id`=c.`id`
+    </select>
+
+    <!--根据设备编号查询设备基础信息-->
+    <select id="findDeviceBySn"  resultType="com.open.device.model.DeviceInfo">
+        SELECT a.*,b.`name`,b.`create_time`AS typeCreateTime,b.`name` AS typeName , c.*,c.`name`AS manuName FROM `device_info` AS a
+        LEFT JOIN `device_type` AS b ON a.`devce_type_id`=b.`type`
+        LEFT JOIN device_manufacturer AS c ON a.`manufacturer_id`=c.`id`
+        WHERE a.`device_sn`= #{device_sn}
+    </select>
+
+
+    <!--查询设备当前状态，设备在线、离线，包括位置信息等。-->
+    <select id="findByDeviceStatus" resultMap="deviceInfoMap">
+        SELECT a.`name`,b.*,c.`status`,d.* FROM `device_info` AS a
+        LEFT JOIN `device_power` AS b ON a.`id`=b.`device_id`
+        LEFT JOIN `device_status` AS c ON c.`device_id`=a.`id`
+        LEFT JOIN `device_install_info` AS d ON d.`device_id`=a.id
+    </select>
+
+    <!--根据设备编号查询设备状态信息-->
+    <select id="findDeviceStatusBySn"  resultType="com.open.device.model.DeviceInfo">
+        SELECT a.`name`,b.*,c.`status`,d.* FROM `device_info` AS a
+        LEFT JOIN `device_power` AS b ON a.`id`=b.`device_id`
+        LEFT JOIN `device_status` AS c ON c.`device_id`=a.`id`
+        LEFT JOIN `device_install_info` AS d ON d.`device_id`=a.id
+        WHERE a.`device_sn`= #{device_sn}
+    </select>
+
+    <select id="findPointData" resultMap="PointMap">
+        SELECT a.`model`,a.`name`,b.*,c.`name` AS typeName ,c.`image`,a.`devce_type_id`,b.`install_address` FROM `device_info` AS a
+        LEFT JOIN `device_install_info` AS b ON a.`id`=b.`device_id`
+        LEFT JOIN `device_type` AS c ON a.`devce_type_id`=c.`type`
+    </select>
+
+    <!--根据Id查询-->
+    <select id="findById"  resultType="com.open.device.model.DeviceInfo">
+        select id from device_info where id=#{id}
+    </select>
+
+    <select id="findBySn" resultType="com.open.device.model.DeviceInfo">
+        SELECT * FROM device_info
+        WHERE device_sn = #{deviceSn}
+        limit 1
+    </select>
+
+    <insert id="save">
+        insert into device_info(
+                                                                            device_sn,
+                                                                            manufacturer_id,
+                                                                            model,
+                                                                            name,
+                                                                            generation_date,
+                                                                            equipment_life,
+                                                                            devce_type_id,
+                                                                            power_supply_mode,
+                                                                            is_iot_device,
+                                                                            create_by,
+                                                                            remark
+                                      ) values (
+                                                #{ deviceSn},
+                                                #{ manufacturerId},
+                                                #{ model},
+                                                #{ name},
+                                                #{ generationDate},
+                                                #{ equipmentLife},
+                                                #{ devceTypeId},
+                                                #{ powerSupplyMode},
+                                                #{ isIotDevice},
+                                                #{ createBy},
+                                                #{remark}
+                              )
+    </insert>
+
+    <update id="update">
+        update device_info
+        <set>
+                            <if test="deviceSn != null">
+                    device_sn = #{deviceSn},
+                </if>
+                            <if test="manufacturerId != null">
+                    manufacturer_id = #{manufacturerId},
+                </if>
+                            <if test="model != null">
+                    model = #{model},
+                </if>
+                            <if test="name != null">
+                    name = #{name},
+                </if>
+                            <if test="status != null">
+                    status = #{status},
+                </if>
+                            <if test="generationDate != null">
+                    generation_date = #{generationDate},
+                </if>
+                            <if test="equipmentLife != null">
+                    equipment_life = #{equipmentLife},
+                </if>
+                            <if test="devceTypeId != null">
+                    devce_type_id = #{devceTypeId},
+                </if>
+                            <if test="powerSupplyMode != null">
+                    power_supply_mode = #{powerSupplyMode},
+                </if>
+                            <if test="isIotDevice != null">
+                    is_iot_device = #{isIotDevice},
+                </if>
+                            <if test="updateBy != null">
+                    update_by = #{updateBy},
+                </if>
+                            <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+                            <if test="remark != null">
+                    remark = #{remark},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyOffline" parameterType="java.util.List" >
+        <if test="list!=null">
+            <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update device_info
+                <set>
+                    status = 1
+                </set>
+                where id=#{item}
+            </foreach>
+        </if>
+    </update>
+
+    <update id="modifyOnline" parameterType="java.util.List" >
+        <if test="list!=null">
+            <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update device_info
+                <set>
+                    status = 0
+                </set>
+                where id=#{item}
+            </foreach>
+        </if>
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_info where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceInfo">
+        SELECT t.*,d.name AS deviceTypeName FROM device_info t
+        LEFT JOIN device_type d ON t.devce_type_id = d.type
+        <where>
+            <if test="name!=null and name!=''">
+                and t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and t.status  = #{status}
+            </if>
+            <if test="devceTypeId!=null and devceTypeId!=''">
+                and t.devce_type_id  = #{devceTypeId}
+            </if>
+        </where>
+        ORDER BY t.`id` ASC
+    </select>
+
+
+    <sql id="where">
+        <where>
+                            <if test="c != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='device_sn'">
+                    and t.device_sn like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='manufacturer_id'">
+                    and t.manufacturer_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='model'">
+                    and t.model like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='name'">
+                    and t.name like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='status'">
+                    and t.status like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='generation_date'">
+                    and t.generation_date like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='equipment_life'">
+                    and t.equipment_life like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='devce_type_id'">
+                    and t.devce_type_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='power_supply_mode'">
+                    and t.power_supply_mode like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='is_iot_device'">
+                    and t.is_iot_device like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_by'">
+                    and t.create_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_by'">
+                    and t.update_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='remark'">
+                    and t.remark like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+
+
+
+</mapper>

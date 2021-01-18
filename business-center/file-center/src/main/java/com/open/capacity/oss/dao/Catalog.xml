@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.oss.dao.CatalogDao">
+
+	<sql id="where">
+		<where>
+			<if test="catalog != null and catalog != ''">
+				and t.catalog like concat('%', #{catalog}, '%')
+			</if>
+
+		</where>
+	</sql>
+
+	<select id="findCatalog" resultType="com.open.capacity.oss.model.Catalog">
+		select * from mdfile_catalog t
+		<where>
+			id = #{id}
+		</where>
+	</select>
+
+
+	<update id="update">
+		update mdfile_catalog
+		<set>
+			<if test="catalog != null">
+				catalog = #{catalog},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

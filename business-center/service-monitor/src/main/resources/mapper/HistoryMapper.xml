@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.open.capacity.monitor.dao.IHistoryDao">
+    <insert id="saveHistoryInfo">
+            INSERT INTO service_history(service_id,start_time,end_time,state,history_result) VALUES (#{serviceId},#{startTime},#{endTime},#{state},#{historyResult})
+    </insert>
+
+    <delete id="deleteHistoryInfoById" parameterType="java.lang.Integer">
+        DELETE FROM service_history WHERE history_id=#{historyId}
+    </delete>
+
+    <delete id="deleteHistoryInfoByServiceId" parameterType="java.lang.Integer">
+        DELETE FROM service_history WHERE serviceId=#{serviceId}
+    </delete>
+
+    <!--    仅支持按主键、外键、和状态查询，如有其他需求，自行添加-->
+    <select id="queryHistoryInfo" resultType="com.open.capacity.monitor.entity.ServiceHistory">
+        SELECT * FROM service_history
+        <where>
+            <if test="historyId!=null">
+                and history_id=#{historyId}
+            </if>
+            <if test="serviceId!=null">
+                and service_id=#{serviceId}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+        ORDER BY start_time desc
+    </select>
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.uaa.dao.DevUserDao">
+    <resultMap type="com.open.capacity.uaa.model.DevUser" id="devUserMap">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="realname" column="realname"/>
+        <result property="phone" column="phone"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.open.capacity.uaa.model.DevUser">
+        insert into dev_user(username,password,realname,phone,createTime,updateTime)
+        values (#{username}, #{password}, #{realname}, #{phone}, #{createTime}, #{updateTime})
+    </insert>
+    <select id="selectByUsername" resultMap="devUserMap">
+        select * from dev_user where username = #{username}
+    </select>
+    <update id="update" parameterType="com.open.capacity.uaa.model.DevUser">
+        update dev_user set username = #{username},realname = #{realname},phone = #{phone},updateTime = #{updateTime}
+        where id = #{id} ;
+    </update>
+    <update id="updatePassword" parameterType="com.open.capacity.uaa.model.DevUser">
+        update dev_user set password = #{password},updateTime = #{updateTime}
+        where id = #{id} ;
+    </update>
+    <select id="findById" resultMap="devUserMap">
+        select * from dev_user where id = #{id}
+    </select>
+    <select id="findClientList" resultType="com.open.capacity.uaa.model.SysClient">
+        select id id , client_id clientId , resource_ids resourceIds ,
+        client_secret clientSecret , `status`,
+        client_secret_str clientSecretStr ,
+        web_server_redirect_uri
+        webServerRedirectUri from oauth_client_details t
+        where id in (select clientId from dev_group_client where groupId = #{params.groupId})
+        <if test="params.clientId!= null and params.clientId != ''">
+            and client_id like '%${params.clientId}%'
+        </if>
+        <if test="params.resourceIds != null and params.resourceIds != ''">
+            and resource_ids = #{params.resourceIds}
+        </if>
+        <if test="params.clientSecret != null and params.clientSecret != ''">
+            and client_secret = #{params.clientSecret}
+        </if>
+        <if test="params.scope != null and params.scope != ''">
+            and scope = #{params.scope}
+        </if>
+        <if
+                test="params.authorizedGrantTypes != null and params.authorizedGrantTypes != ''">
+            and authorized_grant_types = #{params.authorizedGrantTypes}
+        </if>
+        <if
+                test="params.webServerRedirectUri != null and params.webServerRedirectUri != ''">
+            and web_server_redirect_uri = #{params.webServerRedirectUri}
+        </if>
+        <if test="params.authorities != null and params.authorities != ''">
+            and authorities = #{params.authorities}
+        </if>
+        <if
+                test="params.accessTokenValidity != null and params.accessTokenValidity != ''">
+            and access_token_validity = #{params.accessTokenValidity}
+        </if>
+        <if
+                test="params.refreshTokenValidity != null and params.refreshTokenValidity != ''">
+            and refresh_token_validity = #{params.refreshTokenValidity}
+        </if>
+        <if
+                test="params.additionalInformation != null and params.additionalInformation != ''">
+            and additional_information = #{params.additionalInformation}
+        </if>
+        <if test="params.autoapprove != null and params.autoapprove != ''">
+            and autoapprove = #{params.autoapprove}
+        </if>
+
+        <if test="params.searchKey != null and params.searchKey != ''">
+            and client_id like concat('%', #{params.searchKey}, '%')
+        </if>
+    </select>
+    <insert id="insertGroup" parameterType="com.open.capacity.uaa.model.DevGroup">
+        insert into dev_group(id, userId, name)
+        values (#{id}, #{userId}, #{name})
+    </insert>
+    <select id="selectByName" resultType="com.open.capacity.uaa.model.DevGroup">
+        select * from dev_group where name = #{name}
+    </select>
+    <select id="findGroup" resultType="com.open.capacity.uaa.model.DevGroup">
+        select * from dev_group where userId = #{params.userId}
+    </select>
+    <update id="updateGroup" parameterType="com.open.capacity.uaa.model.DevGroup">
+        update dev_group set name = #{name}
+        where id = #{id} ;
+    </update>
+    <delete id="deleteGroup" parameterType="com.open.capacity.uaa.model.DevGroup">
+        delete from dev_group where id = #{id}
+    </delete>
+</mapper>

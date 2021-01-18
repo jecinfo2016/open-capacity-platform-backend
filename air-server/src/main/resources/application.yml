@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: "dev"
+  application:
+    name: air-server
+
+sidecar:
+   port: 5201
+   health-uri: http://localhost:${sidecar.port}/health
+
+ribbon:
+   ConnectTimeout: 50000
+   ReadTimeout: 50000
+
+hystrix:
+   command:
+      default:
+         execution:
+            isolation:
+               thread:
+                  timeoutInMilliseconds: 10000
+
+server:
+  port: 8326
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://${registry.host:localhost}:${registry.port:1111}/eureka/
+
+registry:
+  host: localhost
+  port: 1111

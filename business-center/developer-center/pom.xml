@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>business-center</artifactId>
+        <groupId>com.open.capacity</groupId>
+        <version>2.0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>developer-center</artifactId>
+    <dependencies>
+        <!-- 关系型数据库配置 -->
+        <dependency>
+            <groupId>com.open.capacity</groupId>
+            <artifactId>db-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- 非关系型数据库配置 -->
+        <dependency>
+            <groupId>com.open.capacity</groupId>
+            <artifactId>redis-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- 公共实体配置 -->
+        <dependency>
+            <groupId>com.open.capacity</groupId>
+            <artifactId>common-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- API文档中心配置 -->
+        <dependency>
+            <groupId>com.open.capacity</groupId>
+            <artifactId>swagger-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- WEB守护进程启动springboot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--yml提示-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- 选用eureka时打开-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <!--引入封装好的Gis-starter-->
+        <dependency>
+            <groupId>com.open.capacity</groupId>
+            <artifactId>epanetgis-spring-boot-starter</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

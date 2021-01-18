@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.dao.NPipelineViewDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.capacity.entity.NPipelineView" id="nPipelineViewMap">
+        <result property="id" column="id"/>
+        <result property="dmaId" column="dma_id"/>
+        <result property="pipeid" column="pipeId"/>
+        <result property="nodeNumber" column="node_number"/>
+        <result property="level" column="level"/>
+        <result property="material" column="material"/>
+        <result property="diameter" column="diameter"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="parentNode" column="parent_node"/>
+        <result property="ctreateTime" column="ctreate_time"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into n_pipeline_view(
+                                                        id,
+                                                                            dma_id,
+                                                                            pipeId,
+                                                                            node_number,
+                                                                            level,
+                                                                            material,
+                                                                            diameter,
+                                                                            longitude,
+                                                                            latitude,
+                                                                            parent_node,
+                                                                            ctreate_time
+                                      ) values (
+                                    #{ id},
+                                                #{ dmaId},
+                                                #{ pipeid},
+                                                #{ nodeNumber},
+                                                #{ level},
+                                                #{ material},
+                                                #{ diameter},
+                                                #{ longitude},
+                                                #{ latitude},
+                                                #{ parentNode},
+                                                #{ctreateTime}
+                              )
+    </insert>
+
+    <update id="update">
+        update n_pipeline_view
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="dma_id != null">
+                    dma_id = #{dmaId},
+                </if>
+                            <if test="pipeId != null">
+                    pipeId = #{pipeid},
+                </if>
+                            <if test="node_number != null">
+                    node_number = #{nodeNumber},
+                </if>
+                            <if test="level != null">
+                    level = #{level},
+                </if>
+                            <if test="material != null">
+                    material = #{material},
+                </if>
+                            <if test="diameter != null">
+                    diameter = #{diameter},
+                </if>
+                            <if test="longitude != null">
+                    longitude = #{longitude},
+                </if>
+                            <if test="latitude != null">
+                    latitude = #{latitude},
+                </if>
+                            <if test="parent_node != null">
+                    parent_node = #{parentNode},
+                </if>
+                            <if test="ctreate_time != null">
+                    ctreate_time = #{ctreateTime},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from n_pipeline_view where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.capacity.entity.NPipelineView">
+        select * from n_pipeline_view t
+        <include refid="where"/>
+    </select>
+
+    <select id="findPipelineBypipeId" resultType="com.open.capacity.entity.NPipelineView">
+        select * from n_pipeline_view where pipeId =#{pipeid}
+    </select>
+
+    <select id="PipelineCount" resultType="int">
+        SELECT COUNT(1)
+        FROM (SELECT pipeId FROM `n_pipeline_view`   GROUP BY pipeId) A
+    </select>
+
+
+
+
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='dma_id'">
+                    and t.dma_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='pipeId'">
+                    and t.pipeId like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='node_number'">
+                    and t.node_number like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='level'">
+                    and t.level like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='material'">
+                    and t.material like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='diameter'">
+                    and t.diameter like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='longitude'">
+                    and t.longitude like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='latitude'">
+                    and t.latitude like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='parent_node'">
+                    and t.parent_node like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='ctreate_time'">
+                    and t.ctreate_time like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

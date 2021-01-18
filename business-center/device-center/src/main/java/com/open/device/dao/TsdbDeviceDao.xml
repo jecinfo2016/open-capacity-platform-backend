@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.TsdbDeviceDao">
+    <!--根据条件查询任务调度-->
+    <select id="queryTaskList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        SELECT DISTINCT e.*,t.name device_type_name,g.tag_content
+        FROM equipment_tsdb_task e
+        LEFT JOIN device_type t ON e.device_type=t.type
+        LEFT JOIN equipment_tsdb_tag g ON e.device_type=g.device_type AND e.equipment_tag=g.tag_index
+        WHERE e.client_id=#{clientId}
+        <if test="device_type!=null and device_type!=''">
+            AND e.device_type=#{deviceType}
+        </if>
+        <if test="aggregator!=null and aggregator!=''">
+            AND e.aggregator=#{aggregator}
+        </if>
+        <if test="flag!=null and flag!=''">
+            AND e.flag=#{flag}
+        </if>
+    </select>
+    <!--删除任务调度信息-->
+    <delete id="deleteTaskInfo" parameterType="java.lang.Integer">
+        DELETE FROM equipment_tsdb_task WHERE id=#{id}
+    </delete>
+
+    <!--更新任务调度信息-->
+    <update id="updateTaskInfo" parameterType="com.open.device.model.EquipmentTsdbTask">
+        UPDATE equipment_tsdb_task
+        <set>
+            <if test="cronStr!=null and cronStr!=''">
+                cron_str=#{cronStr},
+            </if>
+            <if test="equipmentSns!=null and equipmentSns!=''">
+                equipment_sns=#{equipmentSns},
+            </if>
+            <if test="taskName!=null and taskName!=''">
+                task_name=#{taskName},
+            </if>
+            <if test="taskDesc!=null and taskDesc!=''">
+                task_desc=#{taskDesc},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--保存任务调度记录-->
+    <insert id="saveTaskOutputInfo" parameterType="java.util.List">
+        insert into equipment_task_output (equipment_tag, equipment_tag_value,times_tamp,task_id,equipment_sns)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.equipmentTag},
+            #{item.equipmentTagValue},#{item.timesTamp},#{item.taskId},#{item.equipmentSns,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <select id="queryEndTimestamp" resultType="java.lang.Long">
+            SELECT t.times_tamp FROM equipment_task_output t WHERE t.task_id=1 ORDER BY t.times_tamp desc limit 1
+    </select>
+
+</mapper>

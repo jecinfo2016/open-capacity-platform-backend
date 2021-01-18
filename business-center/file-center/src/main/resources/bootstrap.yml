@@ -1,0 +1,42 @@
+#端口
+server:
+  port: 5000    #固定端口
+#   port: ${randomServerPort.value[5000,5005]}  #随机端口
+  tomcat:
+    accept-count: 1000
+    max-threads: 3000
+    max-connections: 2000
+#服务名称
+spring:
+  application:
+    name: file-center
+  servlet:
+    multipart:
+      max-request-size: 200MB
+      max-file-size: 200MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+#eureka client配置
+eureka:
+  client:
+    serviceUrl:
+#      defaultZone:  http://172.16.55.185:1111/eureka
+      defaultZone:  http://192.168.3.39:1111/eureka
+    registry-fetch-interval-seconds: 5
+    instance-info-replication-interval-seconds: 10
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${spring.application.instance_id:${server.port}}  #固定端口
+#    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${spring.application.instance_id:${randomServerPort.value[5000,5005]}}  #随机端口
+    lease-renewal-interval-in-seconds: 10  #每隔几秒告诉eureka服务器我还存活，用于心跳检测
+    lease-expiration-duration-in-seconds: 10 #如果心跳检测一直没有发送，10秒后会从eureka服务器中将此服务剔除
+    status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/doc.html # ${server.port}为该服务的端口号
+#    status-page-url: http://${spring.cloud.client.ip-address}:${randomServerPort.value[5000,5005]}/document.html # ${server.port}为该服务的端口号

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DevicePowerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DevicePower" id="devicePowerMap">
+        <result property="id" column="id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="stateOfCharge" column="state_of_charge"/>
+        <result property="voltage" column="voltage"/>
+        <result property="standardVoltage" column="standard_voltage"/>
+        <result property="fullCharge" column="full_charge"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into device_power(
+                                                                            device_id,
+                                                                            state_of_charge,
+                                                                            voltage,
+                                                                            standard_voltage,
+                                                                            full_charge,
+                                      ) values (
+                                                #{ deviceId},
+                                                #{ stateOfCharge},
+                                                #{ voltage},
+                                                #{ standardVoltage},
+                                                #{ fullCharge},
+                              )
+    </insert>
+
+    <update id="update">
+        update device_power
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="deviceId != null">
+                    device_id = #{deviceId},
+                </if>
+                            <if test="stateOfCharge != null">
+                    state_of_charge = #{stateOfCharge},
+                </if>
+                            <if test="voltage != null">
+                    voltage = #{voltage},
+                </if>
+                            <if test="standardVoltage != null">
+                    standard_voltage = #{standardVoltage},
+                </if>
+                            <if test="fullCharge != null">
+                    full_charge = #{fullCharge},
+                </if>
+                            <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_power where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DevicePower">
+        select * from device_power t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='device_id'">
+                    and t.device_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='state_of_charge'">
+                    and t.state_of_charge like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='voltage'">
+                    and t.voltage like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='standard_voltage'">
+                    and t.standard_voltage like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='full_charge'">
+                    and t.full_charge like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

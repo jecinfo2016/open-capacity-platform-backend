@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.user.dao.SysRolePermissionDao">
+
+	<delete id="deleteRolePermission">
+		DELETE p,r FROM sys_permission p LEFT JOIN sys_role_permission r ON p.id = r.permissionId WHERE p.id = #{permissionId};
+	</delete>
+
+	<select id="findPermissionsByRoleIds" resultType="com.open.capacity.common.model.SysPermission">
+		select p.* from
+		sys_permission p
+		inner join sys_role_permission rp on
+		p.id = rp.permissionId
+		<where>
+			rp.roleId in
+			<foreach collection="roleIds" item="roleId" open="("
+					 separator="," close=")">
+				#{roleId}
+			</foreach>
+		</where>
+	</select>
+</mapper>

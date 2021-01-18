@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.capacity.dao.GisPipelineStyleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.capacity.entity.GisPipelineStyle" id="gisPipelineStyleMap">
+        <result property="id" column="id"/>
+        <result property="pipeLineColor" column="pipe_line_color"/>
+        <result property="diameterShow" column="diameter_show"/>
+        <result property="materialShow" column="material_show"/>
+        <result property="level" column="level"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into gis_pipeline_style(
+                                                        id,
+                                                                            pipe_line_color,
+                                                                            diameter_show,
+                                                                            material_show,
+                                                                            level,
+                                                                            create_by,
+                                                                            create_time,
+                                                                            update_by,
+                                                                            update_time,
+                                                                            remark
+                                      ) values (
+                                    #{ id},
+                                                #{ pipeLineColor},
+                                                #{ diameterShow},
+                                                #{ materialShow},
+                                                #{ level},
+                                                #{ createBy},
+                                                #{ createTime},
+                                                #{ updateBy},
+                                                #{ updateTime},
+                                                #{remark}
+                              )
+    </insert>
+
+    <update id="update">
+        update gis_pipeline_style
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="pipe_line_color != null">
+                    pipe_line_color = #{pipeLineColor},
+                </if>
+                            <if test="diameter_show != null">
+                    diameter_show = #{diameterShow},
+                </if>
+                            <if test="material_show != null">
+                    material_show = #{materialShow},
+                </if>
+                            <if test="level != null">
+                    level = #{level},
+                </if>
+                            <if test="create_by != null">
+                    create_by = #{createBy},
+                </if>
+                            <if test="create_time != null">
+                    create_time = #{createTime},
+                </if>
+                            <if test="update_by != null">
+                    update_by = #{updateBy},
+                </if>
+                            <if test="update_time != null">
+                    update_time = #{updateTime},
+                </if>
+                            <if test="remark != null">
+                    remark = #{remark},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from gis_pipeline_style where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.capacity.entity.GisPipelineStyle">
+        select pipe_line_color,diameter_show,material_show,`level` from gis_pipeline_style t
+        <include refid="where"/>
+    </select>
+
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='pipe_line_color'">
+                    and t.pipe_line_color like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='diameter_show'">
+                    and t.diameter_show like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='material_show'">
+                    and t.material_show like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='level'">
+                    and t.level like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_by'">
+                    and t.create_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_by'">
+                    and t.update_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='remark'">
+                    and t.remark like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

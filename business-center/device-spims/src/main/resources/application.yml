@@ -1,0 +1,10 @@
+opentsdb:
+  serviceUrl: http://172.16.55.187:4242
+
+server:
+#    servlet:
+#      context-path: /paratransit
+  port: 8082
+
+socket:
+  port: 10010

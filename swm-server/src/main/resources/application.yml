@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: "dev"
+  application:
+    name: swm-server
+
+sidecar:
+   port: 5448
+   health-uri: http://192.168.3.40:${sidecar.port}/health
+
+ribbon:
+   ConnectTimeout: 50000
+   ReadTimeout: 50000
+
+hystrix:
+   command:
+      default:
+         execution:
+            isolation:
+               thread:
+                  timeoutInMilliseconds: 10000
+
+server:
+  port: 8327
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://${registry.host:192.168.3.39}:${registry.port:1111}/eureka/
+
+registry:
+  host: 192.168.3.39
+  port: 1111

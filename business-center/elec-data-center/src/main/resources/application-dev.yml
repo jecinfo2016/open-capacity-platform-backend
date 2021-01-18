@@ -1,0 +1,31 @@
+#数据库配置信息
+spring:
+    datasource:
+        name: qbzzSource
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://127.0.0.1:3306/jsyh?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password: sa
+        driver-class-name: com.mysql.jdbc.Driver
+        minIdle: 1
+        maxActive: 2
+        initialSize: 1
+        timeBetweenEvictionRunsMillis: 3000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+
+#服务器配置信息
+server:
+    port: 9091
+    udpport: 28970
+#日志文件配置信息
+logging:
+    config: classpath:logback.xml
+    level: debug
+#设备信息
+ght:
+    deviceidurl: http://39.104.68.199:8000/hlw/airalert/socket/push/1212
+    switchcontrolurl: http://39.104.68.199:8000/hlw/switchcontrol/socket/push/1214

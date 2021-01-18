@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.user.dao.SysDeptDao">
+
+    <resultMap id="BaseResultMap" type="com.open.capacity.common.model.SysDept">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="level" property="level"/>
+        <result column="remark" property="remark"/>
+        <result column="operator" property="operator"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+    <select id="getAllDept" resultMap="BaseResultMap">
+        SELECT * FROM sys_dept WHERE parent_id = 0
+    </select>
+
+    <select id="getDeptByParentId" resultMap="BaseResultMap">
+        SELECT * FROM sys_dept WHERE parent_id = #{parentId}
+    </select>
+
+    <insert id="save">
+        INSERT INTO sys_dept (
+        <if test="sysDept.name != null and sysDept.name != ''">
+            name,
+        </if>
+        <if test="sysDept.parentId != null and sysDept.parentId != ''">
+            parent_id,
+        </if>
+        <if test="sysDept.level != null and sysDept.level != ''">
+            level,
+        </if>
+        <if test="sysDept.remark != null and sysDept.remark != ''">
+            remark,
+        </if>
+        <if test="sysDept.operator != null and sysDept.operator != ''">
+            operator,
+        </if>
+            updateTime
+        )
+        VALUES
+        (
+        <if test="sysDept.name != null and sysDept.name != ''">
+            #{sysDept.name},
+        </if>
+        <if test="sysDept.parentId != null and sysDept.parentId != ''">
+            #{sysDept.parentId},
+        </if>
+        <if test="sysDept.level != null and sysDept.level != ''">
+            #{sysDept.level},
+        </if>
+        <if test="sysDept.remark != null and sysDept.remark != ''">
+            #{sysDept.remark},
+        </if>
+        <if test="sysDept.operator != null and sysDept.operator != ''">
+            #{sysDept.operator},
+        </if>
+            now()
+        )
+    </insert>
+
+    <update id="update">
+        update sys_dept
+        <set>
+            <if test="sysDept.name != null and sysDept.name != ''">
+                name = #{sysDept.name,jdbcType=VARCHAR},
+            </if>
+            <if test="sysDept.parentId != null and sysDept.parentId != ''">
+                parent_id = #{sysDept.parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="sysDept.remark != null and sysDept.remark != ''">
+                remark = #{sysDept.remark,jdbcType=VARCHAR}
+            </if>
+            updateTime = now(),
+        </set>
+        where id = #{sysDept.id,jdbcType=INTEGER}
+    </update>
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from sys_dept where id = #{id}
+    </delete>
+</mapper>

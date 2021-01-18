@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.open.device.dao.DeviceAppDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.open.device.model.DeviceApp" id="deviceAppMap">
+        <result property="id" column="id"/>
+        <result property="appId" column="app_id"/>
+        <result property="deviceSn" column="device_sn"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!--根据appId查询-->
+    <select id="selectByAppId" resultType="int">
+        SELECT count(app_id) FROM device_app WHERE app_id=#{appId}
+    </select>
+
+    <!--根据appId查询设备sn-->
+    <select id="findAppsn"  resultType="int">
+<!--        SELECT count(device_sn) FROM device_app WHERE app_id=#{appId} and device_sn=#{deviceSn}-->
+        SELECT  count(1)
+        FROM  device_info a,dev_device_relation b
+        WHERE a.id=b.device_id
+        AND a.device_sn=#{deviceSn}
+        AND b.client_id = (SELECT c.id FROM `oauth-center`.oauth_client_details c WHERE c.client_id=#{appId})
+    </select>
+
+    <select id="selectByDeviceSn" resultType="com.open.device.model.DeviceApp">
+        SELECT device_sn FROM device_app WHERE device_sn=#{deviceSn}
+    </select>
+
+
+    <insert id="save">
+        insert into device_app(
+                                                                            app_id,
+        device_sn,
+                                                                            create_by,
+                                                                            remark
+                                      ) values (
+                                                #{ appId},
+                                                #{ deviceSn},
+                                                #{ createBy},
+                                                #{remark}
+                              )
+    </insert>
+
+    <update id="update">
+        update device_app
+        <set>
+                            <if test="id != null">
+                    id = #{id},
+                </if>
+                            <if test="appId != null">
+                    app_id = #{appId},
+                </if>
+                            <if test="deviceSn != null">
+                                device_sn = #{deviceSn},
+                </if>
+                            <if test="updateBy != null">
+                    update_by = #{updateBy},
+                </if>
+                            <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+                            <if test="remark != null">
+                    remark = #{remark},
+                </if>
+                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long" flushCache="true">
+        delete from device_app where id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="com.open.device.model.DeviceApp">
+        select * from device_app t
+        <include refid="where"/>
+    </select>
+    <sql id="where">
+        <where>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='id'">
+                    and t.id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='app_id'">
+                    and t.app_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='device_sn'">
+                    and t.device_id like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_by'">
+                    and t.create_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='create_time'">
+                    and t.create_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_by'">
+                    and t.update_by like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='update_time'">
+                    and t.update_time like concat('%', #{searchValue}, '%')
+                </if>
+                            <if test="searchKey != null and searchKey != '' and searchKey=='remark'">
+                    and t.remark like concat('%', #{searchValue}, '%')
+                </if>
+                    </where>
+    </sql>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.developer.device.dao.DeviceInfoMapper">
+
+  <select id="queryDeviceInfoList" parameterType="java.util.HashMap" resultType="com.open.capacity.developer.device.entity.DeviceInfo">
+        SELECT d.id,d.device_sn,d.name FROM device_info d
+        <where>
+            <if test="deviceSn!=null and deviceSn!=''">
+              and d.device_sn like concat('%', #{deviceSn}, '%')
+            </if>
+            <if test="deviceName!=null and deviceName!=''">
+              and d.name like concat('%', #{deviceName}, '%')
+            </if>
+        </where>
+  </select>
+
+  <select id="queryDeviceTypeList" resultType="com.open.capacity.developer.device.entity.DeviceType">
+        SELECT d.type,d.name FROM device_type d
+  </select>
+</mapper>
